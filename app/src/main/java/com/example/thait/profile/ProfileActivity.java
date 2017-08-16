@@ -27,12 +27,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     Button btnLogOut,update;
-    TextView name,email,gender,age;
+//    TextView name,email,gender,age;
     TextView editName,editEmail,editGender,editAge;
     EditText eName,eEmail,eGender,eAge;
     ImageView pic;
     String userUID,userEmail;
     boolean changeName,changeEmail,changeGender,changeAge;
+    ArrayList<String> userInfo;
 
     FirebaseUser user;
     DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
@@ -40,6 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
     DatabaseReference childEmail;
     DatabaseReference childGender;
     DatabaseReference childAge;
+
 //    DatabaseReference childUID = mRef.child("uid");
 
     @Override
@@ -47,21 +49,28 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        btnLogOut = (Button)findViewById(R.id.logout);
-        update = (Button)findViewById(R.id.update);
-        name = (TextView)findViewById(R.id.name);
-        email = (TextView) findViewById(R.id.email);
-        gender = (TextView) findViewById(R.id.gender);
-        age = (TextView) findViewById(R.id.age);
-        pic = (ImageView)findViewById(R.id.propic);
+        final ArrayList<String> userInfo = new ArrayList<String>();
+        User currentUser;
+        final String[] nameText = new String[1];
+        final String[] emailText = new String[1];
+        final String[] genderText = new String[1];
+        final String[] ageText = new String[1];
+
+        btnLogOut = (Button) findViewById(R.id.logout);
+        update = (Button) findViewById(R.id.update);
+//        name = (TextView) findViewById(R.id.name);
+//        email = (TextView) findViewById(R.id.email);
+//        gender = (TextView) findViewById(R.id.gender);
+//        age = (TextView) findViewById(R.id.age);
+        pic = (ImageView) findViewById(R.id.propic);
         editName = (TextView) findViewById(R.id.edit1);
         editEmail = (TextView) findViewById(R.id.edit2);
         editGender = (TextView) findViewById(R.id.edit3);
         editAge = (TextView) findViewById(R.id.edit4);
-        eName = (EditText) findViewById(R.id.name2);
-        eEmail = (EditText) findViewById(R.id.email2);
-        eGender = (EditText) findViewById(R.id.gender2);
-        eAge = (EditText) findViewById(R.id.age2);
+        eName = (EditText) findViewById(R.id.name);
+        eEmail = (EditText) findViewById(R.id.email);
+        eGender = (EditText) findViewById(R.id.gender);
+        eAge = (EditText) findViewById(R.id.age);
 
         changeName = false;
         changeEmail = false;
@@ -73,8 +82,8 @@ public class ProfileActivity extends AppCompatActivity {
         user = auth.getCurrentUser();
         userUID = user.getUid();
         userEmail = user.getEmail();
-        email.setText(userEmail);
-        Toast.makeText(ProfileActivity.this, userEmail, Toast.LENGTH_SHORT).show();
+//        email.setText(userEmail);
+
 
         //REFERENCES
         DatabaseReference childInfoName = mRef.child(userUID);
@@ -83,29 +92,104 @@ public class ProfileActivity extends AppCompatActivity {
         childGender = childInfoName.child("gender");
         childAge = childInfoName.child("age");
 
-        childEmail.setValue(user.getEmail());
 
+//        childInfoName.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+//
+//                for(DataSnapshot child : children){
+//                    String temp = child.getValue(String.class);
+//                    userInfo.add(temp);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+
+
+
+//        childName.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String nameText = dataSnapshot.getValue(String.class);
+//                name.setText(nameText);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//        childEmail.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String emailText = dataSnapshot.getValue(String.class);
+//                email.setText(emailText);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//        childGender.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String genderText = dataSnapshot.getValue(String.class);
+//                gender.setText(genderText);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//        childAge.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String ageText = dataSnapshot.getValue(String.class);
+//                age.setText(ageText);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+
+        childEmail.setValue(user.getEmail());
+        eName.setText(LoginTransition.userInfo.get(0));
+        eEmail.setText(LoginTransition.userInfo.get(1));
+        eGender.setText(LoginTransition.userInfo.get(2));
+        eAge.setText(LoginTransition.userInfo.get(3));
         eName.setEnabled(false);
         eEmail.setEnabled(false);
         eGender.setEnabled(false);
         eAge.setEnabled(false);
 
-        pic.setImageResource(R.drawable.unknownwoman);
-
-
-
-
-
-
-        eName.setText(name.getText().toString());
-        name.setText(eName.getText().toString());
-        eEmail.setText(email.getText().toString());
-        eGender.setText(gender.getText().toString());
-        eAge.setText(age.getText().toString());
-        age.setText(eAge.getText().toString());
-
+        if(eGender.getText().toString().equalsIgnoreCase("female")) {
+            pic.setImageResource(R.drawable.unknownwoman);
+        }
+        else{
+            pic.setImageResource(R.drawable.unknownman);
+        }
 
     }
+
+
+
+
+
+
+
+
 
 
     @Override
@@ -116,65 +200,11 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-        childName.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                String nameText = dataSnapshot.getValue(String.class);
-                name.setText(nameText);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        childEmail.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String emailText = dataSnapshot.getValue(String.class);
-                email.setText(emailText);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        childGender.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String genderText = dataSnapshot.getValue(String.class);
-                gender.setText(genderText);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        childAge.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String ageText = dataSnapshot.getValue(String.class);
-                age.setText(ageText);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
 
 //        String email = auth.getInstance().getCurrentUser().getEmail();
 //        name.setText(auth.getInstance().getCurrentUser().getEmail());
         if(auth.getCurrentUser() == null)
-            name.setText("Null User");
+            eName.setText("Null User");
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,9 +212,9 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                 startActivity(intent);
                 if(auth.getCurrentUser() == null)
-                    name.setText("Success Sign Out");
+                    eName.setText("Success Sign Out");
                 else
-                    name.setText("Failed Sign Out");
+                    eName.setText("Failed Sign Out");
 
                 finish();
             }
@@ -198,10 +228,7 @@ public class ProfileActivity extends AppCompatActivity {
         editName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String oldName = name.getText().toString();
                 eName.setEnabled(true);
-                eName.setText(oldName);
-                name.setEnabled(false);
                 changeName = true;
             }
         });
@@ -209,10 +236,7 @@ public class ProfileActivity extends AppCompatActivity {
         editEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String oldEmail = email.getText().toString();
                 eEmail.setEnabled(true);
-                eEmail.setText(oldEmail);
-                email.setEnabled(false);
                 changeEmail = true;
             }
         });
@@ -221,10 +245,7 @@ public class ProfileActivity extends AppCompatActivity {
         editGender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String oldGender = gender.getText().toString();
                 eGender.setEnabled(true);
-                eGender.setText(oldGender);
-                gender.setEnabled(false);
                 changeGender = true;
             }
         });
@@ -232,10 +253,7 @@ public class ProfileActivity extends AppCompatActivity {
         editAge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String oldAge = age.getText().toString();
                 eAge.setEnabled(true);
-                eAge.setText(oldAge);
-                age.setEnabled(false);
                 changeAge = true;
             }
         });
@@ -253,31 +271,23 @@ public class ProfileActivity extends AppCompatActivity {
 
                 if(changeName == true) {
                     eName.setEnabled(false);
-                    name.setEnabled(true);
-                    name.setText(newName);
                     childName.setValue(newName);
                 }
 
                 if(changeEmail == true) {
 
                     eEmail.setEnabled(false);
-                    email.setEnabled(true);
-                    email.setText(newEmail);
                     childEmail.setValue(newEmail);
                     user.updateEmail(newEmail);
                 }
                 if(changeGender == true) {
 
                     eGender.setEnabled(false);
-                    gender.setEnabled(true);
-                    gender.setText(newGender);
                     childGender.setValue(newGender);
                 }
                 if(changeAge == true) {
 
                     eAge.setEnabled(false);
-                    age.setEnabled(true);
-                    age.setText(newAge);
                     childAge.setValue(newAge);
                 }
 

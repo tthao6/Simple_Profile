@@ -18,6 +18,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -28,6 +33,11 @@ public class LoginActivity extends AppCompatActivity  {
 
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener aListener;
+    DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference childName;
+    DatabaseReference childEmail;
+    DatabaseReference childGender;
+    DatabaseReference childAge;
     EditText inputEmail,inputPassword;
     Button btnLogin,btnReg;
 
@@ -44,16 +54,13 @@ protected void onCreate(Bundle savedInstanceState) {
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
-/*        if (currentUser != null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-        }*/
+
 
         aListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(auth.getCurrentUser() != null){
-                    startActivity(new Intent(LoginActivity.this,ProfileActivity.class));
+                    startActivity(new Intent(LoginActivity.this,LoginTransition.class));
                     finish();
                 }
 
@@ -88,6 +95,9 @@ protected void onCreate(Bundle savedInstanceState) {
 @Override
 protected void onStart(){
     super.onStart();
+
+
+
     auth.addAuthStateListener(aListener);
 }
 
@@ -130,6 +140,8 @@ private void signIn(String email,String password){
                         Toast.makeText(LoginActivity.this, "success", Toast.LENGTH_LONG).show();
                         finish();
                         */
+
+
                     }
                 }
             });
